@@ -12,8 +12,7 @@ class HeartbeatApp extends StatefulWidget {
   _HeartbeatAppState createState() => _HeartbeatAppState();
 }
 
-class _HeartbeatAppState extends State<HeartbeatApp>
-    with SingleTickerProviderStateMixin {
+class _HeartbeatAppState extends State<HeartbeatApp> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   int _countdown = 10;
@@ -90,8 +89,7 @@ class _HeartbeatAppState extends State<HeartbeatApp>
         if (fromLeft) {
           xPosition = Random().nextDouble() * 100; // Left side (0 to 100px)
         } else {
-          xPosition =
-              200 + Random().nextDouble() * 100; // Right side (200 to 300px)
+          xPosition = 200 + Random().nextDouble() * 100; // Right side (200 to 300px)
         }
 
         balloons.add(Offset(xPosition, 500));
@@ -111,111 +109,132 @@ class _HeartbeatAppState extends State<HeartbeatApp>
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // Removed debug banner
       home: Scaffold(
-        backgroundColor: Colors.pink[50],
-        body: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Floating balloons appear on both left & right sides
-            for (var balloon in balloons)
-              Positioned(
-                left: balloon.dx,
-                bottom: balloon.dy,
-                child: TweenAnimationBuilder(
-                  tween: Tween<double>(begin: balloon.dy, end: -50),
-                  duration: Duration(seconds: 5),
-                  builder: (context, value, child) {
-                    return Transform.translate(
-                      offset: Offset(0, value),
-                      child: Icon(Icons.favorite, color: Colors.red, size: 30),
-                    );
-                  },
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.pink[200]!, Colors.purple[300]!], // Modern gradient background
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Floating balloons appear on both left & right sides
+              for (var balloon in balloons)
+                Positioned(
+                  left: balloon.dx,
+                  bottom: balloon.dy,
+                  child: TweenAnimationBuilder(
+                    tween: Tween<double>(begin: balloon.dy, end: -50),
+                    duration: Duration(seconds: 5),
+                    builder: (context, value, child) {
+                      return Transform.translate(
+                        offset: Offset(0, value),
+                        child: Icon(Icons.favorite, color: Colors.redAccent, size: 30),
+                      );
+                    },
+                  ),
+                ),
+
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (!_showValentineMessage) ...[
+                      Text(
+                        "Countdown: $_countdown",
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                      SizedBox(height: 20),
+                    ],
+
+                    // Happy Valentine's Day message appears ABOVE the heart
+                    if (_showValentineMessage)
+                      Column(
+                        children: [
+                          Text(
+                            "💖 Happy Valentine's Day! 💖",
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Cursive",
+                              color: valentineTextColor,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 5,
+                                  color: Colors.black,
+                                  offset: Offset(2, 2),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 15), // Add space before heart
+                        ],
+                      ),
+
+                    // Heartbeat Image Animation with Glow Effect
+                    Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.redAccent.withOpacity(0.6),
+                            blurRadius: 30,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: ScaleTransition(
+                        scale: _animation,
+                        child: Image.asset(
+                          heartImageAsset,
+                          width: 180,
+                          height: 180,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 20),
+
+                    // Love Quotes (Always Visible Below Heart)
+                    AnimatedOpacity(
+                      opacity: 1.0,
+                      duration: Duration(seconds: 2),
+                      child: Text(
+                        currentQuote,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+
+                    SizedBox(height: 30),
+
+                    if (!_showValentineMessage)
+                      ElevatedButton(
+                        onPressed: startCountdown,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: Text("Start ❤️", style: TextStyle(color: Colors.white)),
+                      ),
+                  ],
                 ),
               ),
-
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!_showValentineMessage) ...[
-                    Text(
-                      "Countdown: $_countdown",
-                      style: TextStyle(fontSize: 24, color: Colors.red),
-                    ),
-                    SizedBox(height: 20),
-                  ],
-
-                  // Happy Valentine's Day message appears ABOVE the heart
-                  if (_showValentineMessage)
-                    Column(
-                      children: [
-                        Text(
-                          "💖 Happy Valentine's Day! 💖",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Cursive",
-                            color: valentineTextColor,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 5,
-                                color: Colors.black,
-                                offset: Offset(2, 2),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 10), // Add space before heart
-                      ],
-                    ),
-
-                  // Heartbeat Image Animation
-                  ScaleTransition(
-                    scale: _animation,
-                    child: Image.asset(
-                      heartImageAsset,
-                      width: 180,
-                      height: 180,
-                    ),
-                  ),
-
-                  SizedBox(height: 20),
-
-                  // Love Quotes (Always Visible Below Heart)
-                  AnimatedOpacity(
-                    opacity: 1.0,
-                    duration: Duration(seconds: 2),
-                    child: Text(
-                      currentQuote,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontStyle: FontStyle.italic,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                  SizedBox(height: 30),
-
-                  if (!_showValentineMessage)
-                    ElevatedButton(
-                      onPressed: startCountdown,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                        textStyle: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      child: Text("Start Countdown ❤️"),
-                    ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
