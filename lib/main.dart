@@ -1,4 +1,4 @@
-//Names : Sri Charan Reddy Tokala and Sri krishna kolli
+// names : Sri Charan Reddy Tokala and Sri Krishna Kolii
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -21,6 +21,7 @@ class _HeartbeatAppState extends State<HeartbeatApp>
   Timer? _timer;
   List<Offset> balloons = [];
   final String heartImageAsset = "assets/heart.jpg";
+
   List<String> loveQuotes = [
     "Love is not finding someone to live with, it’s finding someone you can’t live without.",
     "You are my today and all of my tomorrows.",
@@ -83,9 +84,17 @@ class _HeartbeatAppState extends State<HeartbeatApp>
     Timer.periodic(Duration(milliseconds: 500), (timer) {
       if (!mounted) return;
       setState(() {
-        double xPosition = Random().nextDouble() * 300;
-        bool fromLeft = Random().nextBool();
-        balloons.add(Offset(fromLeft ? xPosition : 300 - xPosition, 500));
+        double xPosition;
+        bool fromLeft = Random().nextBool(); // 50% chance left or right
+
+        if (fromLeft) {
+          xPosition = Random().nextDouble() * 100; // Left side (0 to 100px)
+        } else {
+          xPosition =
+              200 + Random().nextDouble() * 100; // Right side (200 to 300px)
+        }
+
+        balloons.add(Offset(xPosition, 500));
       });
 
       if (balloons.length > 30) {
@@ -107,7 +116,7 @@ class _HeartbeatAppState extends State<HeartbeatApp>
         body: Stack(
           alignment: Alignment.center,
           children: [
-            // Floating balloons from both sides
+            // Floating balloons appear on both left & right sides
             for (var balloon in balloons)
               Positioned(
                 left: balloon.dx,
